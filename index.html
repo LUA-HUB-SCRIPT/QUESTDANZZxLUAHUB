@@ -2,185 +2,272 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUA HUB × DANZZ</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LUA HUB × DANZZ | FF QUIZ</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <header class="topbar">
-    <div class="logo"><span>LUA</span> HUB <b>× DANZZ</b></div>
-    <a class="top-donate" href="https://saweria.co/LUAHUBDONATE/wishlist/kursi-gaming-impian-2-ftqvq0" target="_blank">DONATE ↗</a>
-  </header>
+<div class="bg-glow"></div>
 
-  <main>
-    <section class="hero">
-      <div class="tag">OFFICIAL LINK CENTER</div>
-      <h1>LUA HUB <span>×</span> DANZZ</h1>
-      <p>One place. All links. Welcome to our community.</p>
+<header>
+  <div class="logo"><span>LUA</span> HUB <b>× DANZZ</b></div>
+  <div class="live">● QUIZ ONLINE</div>
+</header>
 
-      <div class="hero-buttons">
-        <a class="btn primary" href="https://whatsapp.com/channel/0029VbEVAqrAu3aPqG9kWy1o" target="_blank">JOIN COMMUNITY ↗</a>
-        <a class="btn secondary" href="https://whatsapp.com/channel/0029VbDSpHuHgZWm4G291H16" target="_blank">LUA HUB CHANNEL ↗</a>
+<main>
+  <section class="panel" id="intro">
+    <div class="badge">FREE FIRE CHALLENGE</div>
+    <h1>FF <span>QUIZ</span></h1>
+    <p class="subtitle">Uji pengetahuanmu tentang Free Fire. Berani dapat nilai sempurna?</p>
+
+    <div class="form">
+      <label>NAMA KAMU</label>
+      <input id="playerName" placeholder="Masukkan nama..." maxlength="30">
+
+      <label>GMAIL</label>
+      <input id="playerEmail" type="email" placeholder="Masukkan Gmail..." maxlength="100">
+
+      <button id="startBtn" class="primary">MULAI QUIZ ↗</button>
+    </div>
+    <p class="note">5 soal acak • Harus benar 5/5 untuk perfect score</p>
+  </section>
+
+  <section class="panel quiz-panel hidden" id="quiz">
+    <div class="quiz-top">
+      <span id="questionNumber">SOAL 1 / 5</span>
+      <span id="scoreLive">0 BENAR</span>
+    </div>
+
+    <div class="progress"><div id="progressBar"></div></div>
+
+    <h2 id="questionText">Pertanyaan</h2>
+    <div id="answers" class="answers"></div>
+
+    <button id="nextBtn" class="primary" disabled>JAWAB DULU</button>
+  </section>
+
+  <section class="panel hidden" id="result">
+    <div class="badge">QUIZ SELESAI</div>
+    <div class="result-icon" id="resultIcon">🏆</div>
+    <h1 id="resultTitle">HASIL KAMU</h1>
+    <p id="resultDesc" class="subtitle"></p>
+
+    <div class="score-box">
+      <div>
+        <small>NAMA</small>
+        <strong id="resultName">-</strong>
       </div>
-    </section>
-
-    <section class="fixed-section">
-      <h2>OFFICIAL LINKS</h2>
-      <div class="cards">
-        <a class="link-card donate-card" href="https://saweria.co/LUAHUBDONATE/wishlist/kursi-gaming-impian-2-ftqvq0" target="_blank">
-          <div class="card-icon">♥</div>
-          <div><h3>DONATE LUA HUB</h3><p>Support the LUA HUB project</p></div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="link-card" href="https://whatsapp.com/channel/0029VbEVAqrAu3aPqG9kWy1o" target="_blank">
-          <div class="card-icon">◉</div>
-          <div><h3>CHANNEL DANZZ</h3><p>Join Danzz WhatsApp Channel</p></div>
-          <span class="arrow">↗</span>
-        </a>
-
-        <a class="link-card" href="https://whatsapp.com/channel/0029VbDSpHuHgZWm4G291H16" target="_blank">
-          <div class="card-icon">◉</div>
-          <div><h3>CHANNEL LUA HUB</h3><p>Join LUA HUB WhatsApp Channel</p></div>
-          <span class="arrow">↗</span>
-        </a>
+      <div>
+        <small>SKOR</small>
+        <strong id="resultScore">0/5</strong>
       </div>
-    </section>
-
-    <section class="dynamic-section">
-      <div class="section-heading">
-        <div>
-          <h2>LINK COLLECTION</h2>
-          <p>Links loaded from GitHub .dl files</p>
-        </div>
-        <button id="refreshBtn" class="refresh">↻ REFRESH</button>
+      <div>
+        <small>NILAI</small>
+        <strong id="resultValue">0</strong>
       </div>
+    </div>
 
-      <div id="linksContainer" class="cards">
-        <div class="loading">Loading links...</div>
-      </div>
-      <p id="status" class="status"></p>
-    </section>
-  </main>
+    <button id="sendBtn" class="primary">KIRIM HASIL KE WHATSAPP ↗</button>
+    <button id="retryBtn" class="secondary">COBA LAGI</button>
+  </section>
+</main>
 
-  <footer>
-    <div class="logo"><span>LUA</span> HUB <b>× DANZZ</b></div>
-    <p>Community link center · Powered by GitHub Pages</p>
-    <small>© LUA HUB × DANZZ</small>
-  </footer>
+<footer>
+  LUA HUB × DANZZ · FREE FIRE QUIZ
+</footer>
 
-  <script>
-    // ================= CONFIG =================
-    // Repository PUBLIC tempat file .dl disimpan
-    const GITHUB_OWNER = "YOUR_GITHUB_USERNAME";
-    const GITHUB_REPO = "YOUR_LINK_REPO";
-    const GITHUB_BRANCH = "main";
-    const GITHUB_FOLDER = "links"; // folder tempat file .dl berada
-    // =====================================
+<script>
+const WHATSAPP_NUMBER = "6285784597141";
 
-    const container = document.getElementById("linksContainer");
-    const statusText = document.getElementById("status");
-    const refreshBtn = document.getElementById("refreshBtn");
+const questionBank = [
+  {
+    q: "Apa nama zona yang mengecil seiring berjalannya pertandingan?",
+    a: ["Safe Zone", "Training Zone", "Spawn Zone", "Lobby Zone"],
+    correct: 0
+  },
+  {
+    q: "Apa tujuan utama dalam mode Battle Royale?",
+    a: ["Mengumpulkan ikan", "Menjadi pemain terakhir yang bertahan", "Balapan mobil", "Membangun rumah"],
+    correct: 1
+  },
+  {
+    q: "Apa yang biasanya digunakan untuk memulihkan HP?",
+    a: ["Medkit", "Gloo Wall", "Scope", "Magazine"],
+    correct: 0
+  },
+  {
+    q: "Apa fungsi Gloo Wall?",
+    a: ["Menambah gold", "Mengubah karakter", "Membuat perlindungan", "Memanggil pesawat"],
+    correct: 2
+  },
+  {
+    q: "Apa sebutan untuk tempat awal sebelum pertandingan dimulai?",
+    a: ["Hangar", "Lobby", "Safe Zone", "Armory"],
+    correct: 1
+  },
+  {
+    q: "Apa yang terjadi jika pemain berada di luar zona aman?",
+    a: ["Mendapat bonus", "HP bisa berkurang", "Langsung menang", "Senjata otomatis upgrade"],
+    correct: 1
+  },
+  {
+    q: "Apa fungsi scope pada senjata?",
+    a: ["Memperbesar tampilan target", "Memulihkan HP", "Membuat kendaraan", "Mengisi armor"],
+    correct: 0
+  },
+  {
+    q: "Dalam mode Squad, berapa pemain biasanya berada dalam satu tim?",
+    a: ["2", "3", "4", "8"],
+    correct: 2
+  },
+  {
+    q: "Apa yang bisa ditemukan saat looting?",
+    a: ["Senjata dan perlengkapan", "Poin ujian sekolah", "Wallpaper", "Akun email"],
+    correct: 0
+  },
+  {
+    q: "Apa fungsi revive ketika tersedia dalam mode permainan?",
+    a: ["Mengganti map", "Membantu rekan kembali bertarung", "Menghapus pertandingan", "Mengganti nickname"],
+    correct: 1
+  }
+];
 
-    function parseDL(text) {
-      const result = {};
-      text.split(/\r?\n/).forEach(line => {
-        const parts = line.match(/^\s*(nama|link)\s*=\s*(.*?)\s*$/i);
-        if (parts) result[parts[1].toLowerCase()] = parts[2];
-      });
-      return result;
-    }
+let player = "";
+let email = "";
+let questions = [];
+let current = 0;
+let score = 0;
+let selectedAnswer = null;
 
-    function createCard(name, url) {
-      const card = document.createElement("a");
-      card.className = "link-card";
-      card.href = url;
-      card.target = "_blank";
-      card.rel = "noopener noreferrer";
+const $ = id => document.getElementById(id);
 
-      const icon = document.createElement("div");
-      icon.className = "card-icon";
-      icon.textContent = "↗";
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
-      const info = document.createElement("div");
-      info.className = "card-info";
+function startQuiz() {
+  player = $("playerName").value.trim();
+  email = $("playerEmail").value.trim();
 
-      const title = document.createElement("h3");
-      title.textContent = name;
+  if (!player) {
+    alert("Isi nama kamu dulu!");
+    $("playerName").focus();
+    return;
+  }
 
-      const desc = document.createElement("p");
-      desc.textContent = url;
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert("Masukkan Gmail/email yang valid!");
+    $("playerEmail").focus();
+    return;
+  }
 
-      const arrow = document.createElement("span");
-      arrow.className = "arrow";
-      arrow.textContent = "↗";
+  questions = shuffle(questionBank).slice(0, 5);
+  current = 0;
+  score = 0;
 
-      info.append(title, desc);
-      card.append(icon, info, arrow);
-      return card;
-    }
+  $("intro").classList.add("hidden");
+  $("result").classList.add("hidden");
+  $("quiz").classList.remove("hidden");
 
-    async function loadLinks() {
-      container.innerHTML = '<div class="loading">Loading links from GitHub...</div>';
-      statusText.textContent = "";
+  renderQuestion();
+}
 
-      const api = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FOLDER}?ref=${GITHUB_BRANCH}`;
+function renderQuestion() {
+  selectedAnswer = null;
+  $("nextBtn").disabled = true;
+  $("nextBtn").textContent = "PILIH JAWABAN";
+  $("questionNumber").textContent = `SOAL ${current + 1} / 5`;
+  $("scoreLive").textContent = `${score} BENAR`;
+  $("progressBar").style.width = `${(current / 5) * 100}%`;
+  $("questionText").textContent = questions[current].q;
+  $("answers").innerHTML = "";
 
-      try {
-        const response = await fetch(api);
+  questions[current].a.forEach((answer, index) => {
+    const button = document.createElement("button");
+    button.className = "answer";
+    button.textContent = answer;
 
-        if (!response.ok) {
-          throw new Error("Repository/folder not found or GitHub API unavailable.");
-        }
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".answer").forEach(b => b.classList.remove("selected"));
+      button.classList.add("selected");
+      selectedAnswer = index;
+      $("nextBtn").disabled = false;
+      $("nextBtn").textContent = current === 4 ? "LIHAT HASIL" : "SOAL BERIKUTNYA →";
+    });
 
-        const files = await response.json();
-        const dlFiles = files.filter(file =>
-          file.type === "file" && file.name.toLowerCase().endsWith(".dl")
-        );
+    $("answers").appendChild(button);
+  });
+}
 
-        container.innerHTML = "";
+function nextQuestion() {
+  if (selectedAnswer === null) return;
 
-        if (dlFiles.length === 0) {
-          container.innerHTML = '<div class="loading">Belum ada file .dl ditemukan.</div>';
-          return;
-        }
+  if (selectedAnswer === questions[current].correct) score++;
 
-        let count = 0;
+  current++;
 
-        for (const file of dlFiles) {
-          try {
-            const fileResponse = await fetch(file.download_url);
-            if (!fileResponse.ok) continue;
+  if (current < 5) {
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
 
-            const text = await fileResponse.text();
-            const data = parseDL(text);
+function showResult() {
+  $("quiz").classList.add("hidden");
+  $("result").classList.remove("hidden");
 
-            if (data.nama && data.link && /^https?:\/\//i.test(data.link)) {
-              container.appendChild(createCard(data.nama, data.link));
-              count++;
-            }
-          } catch (err) {
-            console.warn("Gagal membaca:", file.name, err);
-          }
-        }
+  const perfect = score === 5;
+  const value = score * 20;
 
-        if (count === 0) {
-          container.innerHTML = '<div class="loading">File .dl belum berisi nama dan link yang valid.</div>';
-        } else {
-          statusText.textContent = `${count} link berhasil dimuat.`;
-        }
+  $("resultIcon").textContent = perfect ? "🏆" : "🎮";
+  $("resultTitle").textContent = perfect ? "PERFECT SCORE!" : "QUIZ SELESAI";
+  $("resultDesc").textContent = perfect
+    ? "GG! Kamu berhasil menjawab semua pertanyaan dengan benar!"
+    : "Lumayan! Coba lagi untuk mendapatkan nilai sempurna 100.";
+  $("resultName").textContent = player;
+  $("resultScore").textContent = `${score}/5`;
+  $("resultValue").textContent = `${value}/100`;
+  $("progressBar").style.width = "100%";
+}
 
-      } catch (error) {
-        container.innerHTML = '<div class="loading">Gagal memuat link. Periksa konfigurasi GitHub.</div>';
-        statusText.textContent = error.message;
-      }
-    }
+function sendWhatsApp() {
+  const perfect = score === 5;
+  const value = score * 20;
 
-    refreshBtn.addEventListener("click", loadLinks);
-    loadLinks();
-  </script>
+  const message =
+`🔥 LUA HUB × DANZZ — FREE FIRE QUIZ 🔥
+
+Nama: ${player}
+Skor: ${score}/5
+Nilai: ${value}/100
+Status: ${perfect ? "PERFECT SCORE 🏆" : "BELUM PERFECT"}
+
+Quiz telah selesai!`;
+
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+}
+
+function retryQuiz() {
+  $("result").classList.add("hidden");
+  $("intro").classList.remove("hidden");
+  $("playerName").value = player;
+  $("playerEmail").value = email;
+}
+
+$("startBtn").addEventListener("click", startQuiz);
+$("nextBtn").addEventListener("click", nextQuestion);
+$("sendBtn").addEventListener("click", sendWhatsApp);
+$("retryBtn").addEventListener("click", retryQuiz);
+</script>
 
 </body>
 </html>
