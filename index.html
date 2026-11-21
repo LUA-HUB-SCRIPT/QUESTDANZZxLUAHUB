@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUA HUB × DANZZ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="logo"><span>LUA</span> HUB <b>× DANZZ</b></div>
+    <a class="top-donate" href="https://saweria.co/LUAHUBDONATE/wishlist/kursi-gaming-impian-2-ftqvq0" target="_blank">DONATE ↗</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="tag">OFFICIAL LINK CENTER</div>
+      <h1>LUA HUB <span>×</span> DANZZ</h1>
+      <p>One place. All links. Welcome to our community.</p>
+
+      <div class="hero-buttons">
+        <a class="btn primary" href="https://whatsapp.com/channel/0029VbEVAqrAu3aPqG9kWy1o" target="_blank">JOIN COMMUNITY ↗</a>
+        <a class="btn secondary" href="https://whatsapp.com/channel/0029VbDSpHuHgZWm4G291H16" target="_blank">LUA HUB CHANNEL ↗</a>
+      </div>
+    </section>
+
+    <section class="fixed-section">
+      <h2>OFFICIAL LINKS</h2>
+      <div class="cards">
+        <a class="link-card donate-card" href="https://saweria.co/LUAHUBDONATE/wishlist/kursi-gaming-impian-2-ftqvq0" target="_blank">
+          <div class="card-icon">♥</div>
+          <div><h3>DONATE LUA HUB</h3><p>Support the LUA HUB project</p></div>
+          <span class="arrow">↗</span>
+        </a>
+
+        <a class="link-card" href="https://whatsapp.com/channel/0029VbEVAqrAu3aPqG9kWy1o" target="_blank">
+          <div class="card-icon">◉</div>
+          <div><h3>CHANNEL DANZZ</h3><p>Join Danzz WhatsApp Channel</p></div>
+          <span class="arrow">↗</span>
+        </a>
+
+        <a class="link-card" href="https://whatsapp.com/channel/0029VbDSpHuHgZWm4G291H16" target="_blank">
+          <div class="card-icon">◉</div>
+          <div><h3>CHANNEL LUA HUB</h3><p>Join LUA HUB WhatsApp Channel</p></div>
+          <span class="arrow">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="dynamic-section">
+      <div class="section-heading">
+        <div>
+          <h2>LINK COLLECTION</h2>
+          <p>Links loaded from GitHub .dl files</p>
+        </div>
+        <button id="refreshBtn" class="refresh">↻ REFRESH</button>
+      </div>
+
+      <div id="linksContainer" class="cards">
+        <div class="loading">Loading links...</div>
+      </div>
+      <p id="status" class="status"></p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="logo"><span>LUA</span> HUB <b>× DANZZ</b></div>
+    <p>Community link center · Powered by GitHub Pages</p>
+    <small>© LUA HUB × DANZZ</small>
+  </footer>
+
+  <script>
+    // ================= CONFIG =================
+    // Repository PUBLIC tempat file .dl disimpan
+    const GITHUB_OWNER = "YOUR_GITHUB_USERNAME";
+    const GITHUB_REPO = "YOUR_LINK_REPO";
+    const GITHUB_BRANCH = "main";
+    const GITHUB_FOLDER = "links"; // folder tempat file .dl berada
+    // =====================================
+
+    const container = document.getElementById("linksContainer");
+    const statusText = document.getElementById("status");
+    const refreshBtn = document.getElementById("refreshBtn");
+
+    function parseDL(text) {
+      const result = {};
+      text.split(/\r?\n/).forEach(line => {
+        const parts = line.match(/^\s*(nama|link)\s*=\s*(.*?)\s*$/i);
+        if (parts) result[parts[1].toLowerCase()] = parts[2];
+      });
+      return result;
+    }
+
+    function createCard(name, url) {
+      const card = document.createElement("a");
+      card.className = "link-card";
+      card.href = url;
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+
+      const icon = document.createElement("div");
+      icon.className = "card-icon";
+      icon.textContent = "↗";
+
+      const info = document.createElement("div");
+      info.className = "card-info";
+
+      const title = document.createElement("h3");
+      title.textContent = name;
+
+      const desc = document.createElement("p");
+      desc.textContent = url;
+
+      const arrow = document.createElement("span");
+      arrow.className = "arrow";
+      arrow.textContent = "↗";
+
+      info.append(title, desc);
+      card.append(icon, info, arrow);
+      return card;
+    }
+
+    async function loadLinks() {
+      container.innerHTML = '<div class="loading">Loading links from GitHub...</div>';
+      statusText.textContent = "";
+
+      const api = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FOLDER}?ref=${GITHUB_BRANCH}`;
+
+      try {
+        const response = await fetch(api);
+
+        if (!response.ok) {
+          throw new Error("Repository/folder not found or GitHub API unavailable.");
+        }
+
+        const files = await response.json();
+        const dlFiles = files.filter(file =>
+          file.type === "file" && file.name.toLowerCase().endsWith(".dl")
+        );
+
+        container.innerHTML = "";
+
+        if (dlFiles.length === 0) {
+          container.innerHTML = '<div class="loading">Belum ada file .dl ditemukan.</div>';
+          return;
+        }
+
+        let count = 0;
+
+        for (const file of dlFiles) {
+          try {
+            const fileResponse = await fetch(file.download_url);
+            if (!fileResponse.ok) continue;
+
+            const text = await fileResponse.text();
+            const data = parseDL(text);
+
+            if (data.nama && data.link && /^https?:\/\//i.test(data.link)) {
+              container.appendChild(createCard(data.nama, data.link));
+              count++;
+            }
+          } catch (err) {
+            console.warn("Gagal membaca:", file.name, err);
+          }
+        }
+
+        if (count === 0) {
+          container.innerHTML = '<div class="loading">File .dl belum berisi nama dan link yang valid.</div>';
+        } else {
+          statusText.textContent = `${count} link berhasil dimuat.`;
+        }
+
+      } catch (error) {
+        container.innerHTML = '<div class="loading">Gagal memuat link. Periksa konfigurasi GitHub.</div>';
+        statusText.textContent = error.message;
+      }
+    }
+
+    refreshBtn.addEventListener("click", loadLinks);
+    loadLinks();
+  </script>
+
+</body>
+</html>
